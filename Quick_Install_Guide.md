@@ -6,7 +6,7 @@ git clone https://github.com/cyberlink1/Mining-Scheduler.git
 
 Once you have it downloaded, cd to the mining-scheduler directory and run the install.sh
 
-cd mining-scheduler
+cd Mining-Scheduler
 
 ./install.sh
 
