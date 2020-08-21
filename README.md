@@ -1,14 +1,14 @@
 **mining-scheduler**
 
-mining-scheduler is a simple script designed to let you start/stop/rotate crypto mining software and to start the mining software if the system reboots. Using the Linux crontab it lets you schedual out when you want it to start or stop and when you want it to rotate to the next miner in the list.
+mining-scheduler is a simple script designed to let you start/stop/rotate crypto mining software and to start the mining software if the system reboots. Using the Linux crontab it lets you schedule out when you want it to start or stop and when you want it to rotate to the next miner in the list.
 
 **Use Case (Why I wrote it)**
-I have a small mining rig I wanted to use to mine low cap crypto curency. However, I really wanted it to mine a coin for a week then switch to the next coin and mine it for a week. I could do this by hand but prefer it to be automated and with auto payouts from the mineing pools it will do it all from mining a coin for a week to depositing the coins in my wallet. 
+I have a small mining rig I wanted to use to mine low cap crypto currency. However, I really wanted it to mine a coin for a week then switch to the next coin and mine it for a week. I could do this by hand but prefer it to be automated and with auto payouts from the mining pools it will do it all from mining a coin for a week to depositing the coins in my wallet. 
 
 Thus the mining-scheduler was born. I run it from cron and it does the rest.
 
 **Alternate use case #1**
- An alternate use case is to set it up with a cronjob to start and stop the miner. For example you could have your system mine coins while you are at work (8-5) my setting a cronjob to run with the -b (start/boot) option at 8am and the -q (stop/quit) option at 5pm. Thus autostarting and stopping your miner. You could even add a cronjob to do the -r (rotate) every sunday at midnight or on the first of every month.
+ An alternate use case is to set it up with a cronjob to start and stop the miner. For example you could have your system mine coins while you are at work (8-5) my setting a cronjob to run with the -b (start/boot) option at 8am and the -q (stop/quit) option at 5pm. Thus autostarting and stopping your miner. You could even add a cronjob to do the -r (rotate) every Sunday at midnight or on the first of every month.
 
 **Alternate use case #2 suggested by jagerhund101 of Reddit**
 It can be used to turn off mining during peak electricity hours. You can set the time as well as the days of the week and months that are affected by the peak electricity billing. See the bottom of this file for an example.
@@ -17,12 +17,12 @@ It can be used to turn off mining during peak electricity hours. You can set the
 
 The miners.cfg file contains a list of coins you wish to mine along with the directory location of the miner and the command line to start the miner.
 
-The scheduler.cfg file contains the setting for the home directory of the mining-scheduler script. You can also add any environment variables you need for the miner (Ex: AMD Environment). The scheduler.cfg is sourced at the start of the script, this means that you can also add any command lines you need to exicute before the scritp starts such as one that sets the overclock of gpu or memory.
+The scheduler.cfg file contains the setting for the home directory of the mining-scheduler script. You can also add any environment variables you need for the miner (Ex: AMD Environment). The scheduler.cfg is sourced at the start of the script, this means that you can also add any command lines you need to execute before the scrip starts such as one that sets the overclock of gpu or memory.
 
 **Directories**
 
 ```
-   $HOME/run     Used by the script to store a tmp file that containes the name of the running miner
+   $HOME/run     Used by the script to store a tmp file that contains the name of the running miner
    $HOME/pid     Used by the script to store a tmp file with the pid of the running miner
    $HOME/log     When the script starts a miner, STDOUT is redirected to a log file in this directory. The log file name is the <miner_name>.log
    $HOME/miners  I put all my miners in this directory. The script does not require it as we will discuss later. It is just a good way of keeping the system clean and organized.
@@ -30,7 +30,7 @@ The scheduler.cfg file contains the setting for the home directory of the mining
 
 
 **miners.cfg file**
-  This config file is broken down into a collen seperated list of miners with one miner per line. Any line that starts with a # is considered a comment.
+  This config file is broken down into a colon separated list of miners with one miner per line. Any line that starts with a # is considered a comment.
 
   The line format is as follows
    `<Miner_Name>:<Miner_home_directory>:<Miner_commandline>`
@@ -38,7 +38,7 @@ The scheduler.cfg file contains the setting for the home directory of the mining
    Restrictions and limitations.
 ```
    <Miner_Name>            must be a single word or string with no spaces and no colons! 
-   <miner_home_directory>  Can not have any spaces. If the directory starts with a / then it is considered an absolute path. If it does not start with a / it is considered to be relitive to the $MHOME diectory set in scheduler.cfg
+   <miner_home_directory>  Can not have any spaces. If the directory starts with a / then it is considered an absolute path. If it does not start with a / it is considered to be relitive to the $MHOME directory set in scheduler.cfg
    <Miner_commandline>     This is the command line to start the miner. If the miner offers a "daemon" mode or a "background" mode please do not use those options. The script takes care of starting the process in the background.
 ```
 
@@ -68,14 +68,14 @@ The scheduler.cfg file contains the setting for the home directory of the mining
 
    The "-q" option stops the miner that is currently running but remembers what it was, so running with the "-b" option will start back where it left off.
    
-   The "-u" option sets a HALT condition. If it is on (1=on) then the miner will be stoped and it will not start until the condition is removed by clearing the option (0=off) When you clear the option it will auto start the miner. This was implimented for those that want to halt the miner during peak hours. If the system reboots the miner will not start back up until the Halt state is cleared.
+   The "-u" option sets a HALT condition. If it is on (1=on) then the miner will be stopped and it will not start until the condition is removed by clearing the option (0=off) When you clear the option it will auto start the miner. This was implemented for those that want to halt the miner during peak hours. If the system reboots the miner will not start back up until the Halt state is cleared.
 
 *NOTE: mining-scheduler only accepts one `<OPTION>` at a time. This means that you CAN NOT do a "mining-script -q -s next_miner" as it will only take the -q option and ignore anything after that.*
 
 
 **Cron Job examples**
 
-For those not fimalure with crontabs in Linux it breaks down as follows (each star is a field, edit with "crontab -e")
+For those not familiar with crontabs in Linux it breaks down as follows (each star is a field, edit with "crontab -e")
 
 `* * * * * <command>`
 
@@ -89,7 +89,7 @@ For those not fimalure with crontabs in Linux it breaks down as follows (each st
               month          1-12 (or names, see below)
               day of week    0-7 (0 or 7 is Sunday, or use names)
 
-So to rotate miners every sunday at 23:59 you would edit the crontab and enter
+So to rotate miners every Sunday at 23:59 you would edit the crontab and enter
 
 59 23 * * 7 /directory/where/scheduler/is/mining-scheduler -r
 
