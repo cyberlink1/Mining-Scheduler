@@ -1,0 +1,14 @@
+[Unit]
+Description=Mining Scheduler
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+WorkingDirectory=<DIR>
+Type=oneshot
+RemainAfterExit=True
+ExecStart=<DIR>/mining-scheduler -b
+ExecStop=<DIR>/mining-scheduler -q
+User=<USER>
+
+[Install]
+WantedBy=multi-user.target

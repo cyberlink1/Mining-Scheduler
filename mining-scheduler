@@ -1,0 +1,221 @@
+#!/bin/bash
+#
+
+###########################################################
+#                   Mining Scheduler                      #
+#                Written by cl@xganon.com                 #
+#                Copywrite 2020 GPL-V3                    #
+# ETH ADDRESS: 0xC076342F3E915fb5A2672DC3CF519a1C6399010c #
+###########################################################
+
+#
+# load configuration
+#
+
+. /opt/mining-scheduler/scheduler.cfg
+cd $MHOME
+
+IFS=$'\n' GLOBIGNORE='*' command eval  'MINERS=($(grep -v ^# $MHOME/miners.cfg))'
+
+#
+# Display Usage
+#
+usage(){
+    echo '
+        This script takes an option:
+        -b             # used when booting up or when you want to restart the miner
+        -s <miner>     # starts a given miner
+        -r             # rotates to the next miner
+        -c             # clears the system run and pid files
+        -q             # Quit/stop running miner
+        -u 1/0         # User Halt 1=on Stops miner and blocks it from starting at boot. 0=off
+        -h             # This help file
+        Usage: mining-scheduler <OPTION>
+    '
+        exit
+}
+
+#
+# Start miner function 
+#
+function start_miner(){
+  if [ -f $MHOME/run/HALT ]; then echo "Halted by user"; exit 0; fi
+  MINER=$1
+  if [ -f $MHOME/pid/pid ]; then
+     echo "A miner is currently running please use the -q option to stop it before trying to start a new miner."
+     exit 5
+  fi
+
+  for (( c=0; c<=${#MINERS[@]}; c++ ))
+  do
+      MNAME=`echo ${MINERS[$c]} | cut -d: -f1`
+      MINERDIR=`echo ${MINERS[$c]} | cut -d: -f2`
+      MCMD=`echo ${MINERS[$c]} | cut -d: -f3-`
+        if [ $1 == $MNAME ]; then
+          echo "Starting"
+          echo "Miner Name: "$MNAME
+          echo "Miner Command: "$MCMD
+          echo "$MNAME" > $MHOME/run/miner
+          if [[ ! $MINERDIR =~ ^/. ]]; then
+             MINERDIR=$MHOME/$MINERDIR
+          fi
+          cd $MINERDIR
+          nohup $MCMD > $MHOME/logs/$MNAME.log & echo $! > ${MHOME}/pid/pid
+          #nohup $MCMD & echo $! > ${MHOME}/pid/pid
+          exit 0
+  fi
+ done
+ echo "Miner not found in config"
+ exit 5
+}
+
+function stop_miner(){
+  if [ -f $MHOME/pid/pid ]; then
+    MINER=`cat $MHOME/run/miner | head -1`
+    PID=`cat $MHOME/pid/pid`
+    echo "Stopping "${MINER}
+    kill ${PID}
+    if [ -f $MHOME/pid/pid ]; then
+       rm $MHOME/pid/pid
+    fi
+  else
+   echo "No PID File found. If a miner is running please kill it first"
+   exit 5
+  fi
+}
+
+#
+# Rotate miner
+#
+function rotate() {
+   if [ -f $MHOME/run/HALT ]; then echo "Halted by user"; exit 0; fi
+   if [ -f "$MHOME/run/miner" ]; then
+     ACTIVE=`cat $MHOME/run/miner`
+   else
+     echo "No Run File Found"
+     exit 5;
+   fi
+
+  for (( c=0; c<=${#MINERS[@]}; c++ ))
+  do
+      MNAME=`echo ${MINERS[$c]} | cut -d: -f1`
+      MINERDIR=`echo ${MINERS[$c]} | cut -d: -f2`
+      MCMD=`echo ${MINERS[$c]} | cut -d: -f3-`
+      let TOTAL=${#MINERS[@]}-1
+        if [ $ACTIVE == $MNAME ]; then
+          echo "Currently Running "$MNAME
+          if [ $c == $TOTAL ]; then
+             MNAME=`echo ${MINERS[0]} | cut -d: -f1`
+             MINERDIR=`echo ${MINERS[0]} | cut -d: -f2`
+             MCMD=`echo ${MINERS[0]} | cut -d: -f3-`
+          else
+            MNAME=`echo ${MINERS[$c+1]} | cut -d: -f1`
+            MINERDIR=`echo ${MINERS[$c+1]} | cut -d: -f2`
+            MCMD=`echo ${MINERS[$c+1]} | cut -d: -f3-`
+         fi
+         stop_miner
+         sleep 10
+         start_miner $MNAME
+         exit 0
+       fi
+ done
+ echo "Miner not found in config"
+ exit 5
+}
+
+  #
+  #  Bootup 
+  #
+  function boot(){
+    if [ -f $MHOME/run/HALT ]; then echo "Halted by user"; exit 0; fi
+    if [ -f "$MHOME/run/miner" ]; then
+      ACTIVE=`cat $MHOME/run/miner`
+      if [ -f "$MHOME/pid/pid" ]; then
+       MPID=`cat $MHOME/pid/pid`
+       if ps --pid ${MPID} > /dev/null
+       then
+         echo "Miner is currently running"
+         exit 5
+       else
+         if [ -f $MHOME/pid/pid ]; then
+            rm $MHOME/pid/pid
+         fi
+         start_miner $ACTIVE
+       fi
+    fi
+   fi
+      echo "No Run File Found, starting first miner"
+      I=`grep -v ^# $MHOME/miners.cfg | head -1`
+      if [[ ! $I =~ ^#.* ]]
+         then
+          MNAME=`echo ${I} | cut -d: -f1`
+          MINERDIR=`echo ${I} | cut -d: -f2`
+          MCMD=`echo ${I} | cut -d: -f3-`
+          start_miner $MNAME
+          exit 0;
+      fi
+}
+
+#
+# Clear
+#
+function clear() {
+        if [ -f "$MHOME/pid/pid" ]; then
+           MPID=`cat $MHOME/pid/pid`
+           if ps --pid ${MPID} > /dev/null
+           then
+             echo "A Miner is currently running. Run \"mining-scheduler -q\" first"
+             exit 5
+           else
+             rm $MHOME/pid/pid
+           fi
+        fi
+        if [ -f $MHOME/run/miner ]; then
+           rm $MHOME/run/miner
+        fi
+}
+#
+# Get Options
+#
+while getopts [bs:rchq] options
+do
+  case $options in
+    b ) echo "Boot" 
+        boot
+        exit 0
+        ;;
+    s ) start_miner $OPTARG
+        ;;
+    r ) echo "Rotate"
+        rotate
+        ;;
+    c ) echo "Clear"
+        clear
+        exit 0
+        ;;
+    q ) stop_miner
+        exit 0
+        ;;
+    u ) if [ $OPTARG == 1 ]; then
+         touch $MHOME/run/HALT
+         stop_miner
+         exit 0
+        fi
+        if [ $OPTARG == 0 ]; then
+         if [ -f $MHOME/run/HALT ]; then rm run/HALT; fi
+         boot
+         exit 0;
+        fi
+        echo "Unknown option $OPTARG"
+        exit 5
+        ;;
+    h ) usage
+         exit 1;;
+    \? ) usage
+         exit 1;;
+    * ) usage
+          exit 1;;
+  esac
+done
+usage
+exit 1
