@@ -117,6 +117,6 @@ Peak hours where I am are 1pm to 7pm Monday through Friday for the months of Jun
 * lolminer works with no issues (https://github.com/Lolliedieb/lolMiner-releases)
 * Claymore miner works. (https://github.com/Claymore-Dual/Claymore-Dual-Miner/releases)
 * xmrig miner works (https://github.com/xmrig/xmrig/releases)
-* nsgminer needs the --text-only option to work with the script (https://github.com/ghostlander/nsgminer) You have to compile the source to linux.
+* nsgminer needs the --text-only option to work with the script (https://github.com/ghostlander/nsgminer) You have to compile the source for linux.
 
 *I have not tested other miners but will update the list as I test them, or if others report a working status*
