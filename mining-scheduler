@@ -55,12 +55,12 @@ function start_miner(){
           echo "Starting"
           echo "Miner Name: "$MNAME
           echo "Miner Command: "$MCMD
-          echo "$MNAME" >> $MHOME/run/miner
+          echo "$MNAME" > $MHOME/run/miner
           if [[ ! $MINERDIR =~ ^/. ]]; then
              MINERDIR=$MHOME/$MINERDIR
           fi
           cd $MINERDIR
-          nohup $MCMD > $MHOME/logs/$MNAME.log & echo $! > ${MHOME}/pid/pid
+          nohup $MCMD >> $MHOME/logs/$MNAME.log & echo $! > ${MHOME}/pid/pid
           #nohup $MCMD & echo $! > ${MHOME}/pid/pid
           exit 0
   fi
