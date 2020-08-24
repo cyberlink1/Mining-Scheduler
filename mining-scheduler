@@ -55,7 +55,7 @@ function start_miner(){
           echo "Starting"
           echo "Miner Name: "$MNAME
           echo "Miner Command: "$MCMD
-          echo "$MNAME" > $MHOME/run/miner
+          echo "$MNAME" >> $MHOME/run/miner
           if [[ ! $MINERDIR =~ ^/. ]]; then
              MINERDIR=$MHOME/$MINERDIR
           fi
