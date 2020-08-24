@@ -141,8 +141,8 @@ function rotate() {
             rm $MHOME/pid/pid
          fi
        fi
-         start_miner $ACTIVE
     fi
+         start_miner $ACTIVE
    fi
       echo "No Run File Found, starting first miner"
       I=`grep -v ^# $MHOME/miners.cfg | head -1`
