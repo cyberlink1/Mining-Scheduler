@@ -140,8 +140,8 @@ function rotate() {
          if [ -f $MHOME/pid/pid ]; then
             rm $MHOME/pid/pid
          fi
-         start_miner $ACTIVE
        fi
+         start_miner $ACTIVE
     fi
    fi
       echo "No Run File Found, starting first miner"
