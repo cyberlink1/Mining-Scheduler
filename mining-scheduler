@@ -127,25 +127,24 @@ function rotate() {
   #  Bootup 
   #
   function boot(){
-    if [ -f $MHOME/run/HALT ]; then echo "Halted by user"; exit 0; fi
-    if [ -f "$MHOME/run/miner" ]; then
-      ACTIVE=`cat $MHOME/run/miner`
-      if [ -f "$MHOME/pid/pid" ]; then
-       MPID=`cat $MHOME/pid/pid`
+    if [ -f "${MHOME}/run/miner" ]; then
+      ACTIVE=`cat ${MHOME}/run/miner`
+      if [ -f "${MHOME}/pid/pid" ]; then
+       MPID=`cat ${MHOME}/pid/pid`
        if ps --pid ${MPID} > /dev/null
        then
          echo "Miner is currently running"
          exit 5
        else
-         if [ -f $MHOME/pid/pid ]; then
-            rm $MHOME/pid/pid
+         if [ -f ${MHOME}/pid/pid ]; then
+            rm ${MHOME}/pid/pid
          fi
        fi
-    fi
+     fi
          start_miner $ACTIVE
-   fi
+    else
       echo "No Run File Found, starting first miner"
-      I=`grep -v ^# $MHOME/miners.cfg | head -1`
+      I=`grep -v ^# ${MHOME}/miners.cfg | head -1`
       if [[ ! $I =~ ^#.* ]]
          then
           MNAME=`echo ${I} | cut -d: -f1`
@@ -154,7 +153,9 @@ function rotate() {
           start_miner $MNAME
           exit 0;
       fi
+    fi
 }
+
 
 #
 # Clear
