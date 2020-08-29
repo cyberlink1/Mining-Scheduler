@@ -56,6 +56,9 @@ function start_miner(){
           echo "Miner Name: "$MNAME
           echo "Miner Command: "$MCMD
           echo "$MNAME" > $MHOME/run/miner
+          if [[ -d /var/lib/prometheus/node-exporter ]]; then
+                  echo "mining_scheduler{mining=\"${MNAME}\"} 1" > /var/lib/prometheus/node-exporter/miner.prom
+          fi
           if [[ ! $MINERDIR =~ ^/. ]]; then
              MINERDIR=$MHOME/$MINERDIR
           fi
