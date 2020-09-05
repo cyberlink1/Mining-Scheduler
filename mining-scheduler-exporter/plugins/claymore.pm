@@ -41,8 +41,7 @@ my $GPU=0;
 #
 # URL to pull JSON data from miner
 #
-#my $url = "127.0.0.1:3333";
-my $url = "192.168.1.126:3333";
+my $url = "127.0.0.1:3333";
 
 #
 #Pull what we are mining
