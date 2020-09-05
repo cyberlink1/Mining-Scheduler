@@ -1,4 +1,10 @@
 #!/usr/bin/perl
+#################################################################################
+#                                                                               #
+#     This is a copy of the mining-scheduler-exporter I use for local testing   # 
+#     Please do not use as it is set to my local directory structures.          #
+#                                                                               #
+#################################################################################
 use JSON;
 use LWP::Simple;
 my $MHOME="/home/cl/mining-scheduler/Mining-Scheduler";
