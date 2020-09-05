@@ -90,6 +90,14 @@ fi
   sed -i "s~$LKEY~$LOCATION~" scheduler.cfg
   echo "Done"
   echo ""
+#
+# Modify mining-scheduler-exporter
+#
+
+  echo "Setting \$MHOME in mining-scheduler-exporter"
+  sed -i "s~$LKEY~$LOCATION~" mining-scheduler-exporter
+  echo "Done"
+  echo ""
 
 #
 # Copy files to install location

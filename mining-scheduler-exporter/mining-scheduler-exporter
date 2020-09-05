@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use JSON;
 use LWP::Simple;
-my $MHOME="/opt/mining-scheduler";
+my $MHOME="<DIR>";
 my $GPUS=0;
 
 #

@@ -4,6 +4,8 @@ This is the directory for the miner exporter plugins.
  * Stats plugins must be named all lowercase and must be the same name used to call them in the miners.cfg
  * Stats plugins must contain "package <plugin_name>;"
  * Stats plugins must have atlease one sub named "sub mstats()"
+ * Stats plugins should always use the variable $url to store the url:port used for the api.
+ * If a given stat is not avaliable via the API return a 0 for the stat.
  * Stats plugins must return the following in order
    * pool
    * user
