@@ -36,10 +36,6 @@ my $total_shares_submitted;
 my $GPUS=0;
 
 #
-# need to break the below off into a pm file and have it return ($var, $var, $var, \@array, etc.)
-#
-
-#
 # URL to pull JSON data from miner
 #
 my $url = 'http://localhost:9144/summary';
