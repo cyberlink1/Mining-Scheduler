@@ -13,9 +13,10 @@
 #
 
 . /opt/mining-scheduler/scheduler.cfg
+
 cd $MHOME
 
-IFS=$'\n' GLOBIGNORE='*' command eval  'MINERS=($(grep -v ^# $MHOME/miners.cfg))'
+
 
 #
 # Display Usage
@@ -36,39 +37,82 @@ usage(){
 }
 
 #
+# Load miner.cfg
+#
+
+IFS=$'\n' GLOBIGNORE='*' command eval  'MINERS=($(grep -v ^# $MHOME/miners.cfg))'
+
+#
+# Set Miner Var's for the script
+#
+function set_miner_var {
+          MNAME=`echo ${MINERS[$1]} | cut -d: -f1`
+          MINERDIR=`echo ${MINERS[$1]} | cut -d: -f2`
+          MINERSTAT=`echo ${MINERS[$1]} | cut -d: -f3`
+          MCMD=`echo ${MINERS[$1]} | cut -d: -f4-`
+}
+
+#
+# Parse miners.cfg 
+#
+function load_minercfg() {
+    for (( c=0; c<=${#MINERS[@]}-1; c++ ))
+    do
+#
+# Return first miner
+#
+      if [[ $1 = "first" ]] && [[ $c = 0 ]]; then 
+        echo "First"
+        set_miner_var $c;
+        return
+      fi
+#
+# Rotate miner
+#
+      let "q = ${#MINERS[@]} - 1"
+      if [[ $1 = "rotate" ]] && [[ ! $c = $q ]] && [[ ${MINERS[${c}]} =~ ^"${ACTIVE}" ]]; then        
+          let "c = $c + 1"
+          set_miner_var $c
+          return
+       fi
+       if [[ $1 = "rotate" ]] && [[ $c = $q ]] &&  [[ ${MINERS[${c}]} =~ ^"${ACTIVE}" ]]; then
+          set_miner_var 0
+          return
+      fi
+#
+#  Find miner by name
+#
+      if [[ "${MINERS[${c}]}" =~ ^"${1}:" ]]; then         
+        set_miner_var $c
+      return
+      fi
+    done
+    echo "No miner found with name $1"
+    exit 5
+}
+
+
+#
 # Start miner function 
 #
 function start_miner(){
-  if [ -f $MHOME/run/HALT ]; then echo "Halted by user"; exit 0; fi
   MINER=$1
+  if [ -f $MHOME/run/HALT ]; then echo "Halted by user"; exit 0; fi
   if [ -f $MHOME/pid/pid ]; then
      echo "A miner is currently running please use the -q option to stop it before trying to start a new miner."
      exit 5
   fi
-
-  for (( c=0; c<=${#MINERS[@]}; c++ ))
-  do
-      MNAME=`echo ${MINERS[$c]} | cut -d: -f1`
-      MINERDIR=`echo ${MINERS[$c]} | cut -d: -f2`
-      MCMD=`echo ${MINERS[$c]} | cut -d: -f3-`
-        if [ $1 == $MNAME ]; then
-          echo "Starting"
-          echo "Miner Name: "$MNAME
-          echo "Miner Command: "$MCMD
-          echo "$MNAME" > $MHOME/run/miner
-          if [[ -d /var/lib/prometheus/node-exporter ]]; then
-                  MINER=`echo "${MCMD}" | cut -d" " -f1 | cut -d/ -f2`
-                  echo "mining_scheduler{mining=\"${MNAME}\",miner=\"$MINER\"} 1" > /var/lib/prometheus/node-exporter/miner.prom
-          fi
+      load_minercfg $MINER 
+      echo "Starting"
+      echo "Miner Name: $MNAME"
+      echo "Miner Command: $MCMD"
+      echo "$MNAME" > $MHOME/run/miner
           if [[ ! $MINERDIR =~ ^/. ]]; then
              MINERDIR=$MHOME/$MINERDIR
           fi
           cd $MINERDIR
           nohup $MCMD >> $MHOME/logs/$MNAME.log & echo $! > ${MHOME}/pid/pid
-          #nohup $MCMD & echo $! > ${MHOME}/pid/pid
           exit 0
-  fi
- done
  echo "Miner not found in config"
  exit 5
 }
@@ -99,30 +143,12 @@ function rotate() {
      echo "No Run File Found"
      exit 5;
    fi
-
-  for (( c=0; c<=${#MINERS[@]}; c++ ))
-  do
-      MNAME=`echo ${MINERS[$c]} | cut -d: -f1`
-      MINERDIR=`echo ${MINERS[$c]} | cut -d: -f2`
-      MCMD=`echo ${MINERS[$c]} | cut -d: -f3-`
-      let TOTAL=${#MINERS[@]}-1
-        if [ $ACTIVE == $MNAME ]; then
-          echo "Currently Running "$MNAME
-          if [ $c == $TOTAL ]; then
-             MNAME=`echo ${MINERS[0]} | cut -d: -f1`
-             MINERDIR=`echo ${MINERS[0]} | cut -d: -f2`
-             MCMD=`echo ${MINERS[0]} | cut -d: -f3-`
-          else
-            MNAME=`echo ${MINERS[$c+1]} | cut -d: -f1`
-            MINERDIR=`echo ${MINERS[$c+1]} | cut -d: -f2`
-            MCMD=`echo ${MINERS[$c+1]} | cut -d: -f3-`
-         fi
          stop_miner
          sleep 10
+         load_minercfg rotate
+         echo "Miner : $MNAME"
          start_miner $MNAME
          exit 0
-       fi
- done
  echo "Miner not found in config"
  exit 5
 }
@@ -148,16 +174,10 @@ function rotate() {
          start_miner $ACTIVE
     else
       echo "No Run File Found, starting first miner"
-      I=`grep -v ^# ${MHOME}/miners.cfg | head -1`
-      if [[ ! $I =~ ^#.* ]]
-         then
-          MNAME=`echo ${I} | cut -d: -f1`
-          MINERDIR=`echo ${I} | cut -d: -f2`
-          MCMD=`echo ${I} | cut -d: -f3-`
+          load_minercfg first
           start_miner $MNAME
           exit 0;
-      fi
-    fi
+   fi 
 }
 
 
