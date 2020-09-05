@@ -11,3 +11,7 @@ Notes: The plugins for the stats collector look to the hostname localhost (127.0
  * lolminer api port 9144
  * phoenixminer api port 3333
  * claymore api port 3333
+
+There is a stats plugin called none.pm, this one returns 0 on all stats.
+
+![lolminer](lolminer.png) 
