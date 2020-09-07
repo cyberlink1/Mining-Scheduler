@@ -75,7 +75,7 @@ $socket->close();
   $stats = decode_json $data;
   
   $miner = $stats->{'summary'}{'STATUS'}[0]{'Description'};
-  $total_shares_submitted = $stats->{'summary'}{'SUMMARY'}[0]{'Getworks'};
+  $total_shares_submitted = $stats->{'summary'}{'SUMMARY'}[0]{'Accepted'}-$stats->{'summary'}{'SUMMARY'}[0]{'Rejected'};
   $total_hashrate = $stats->{summary}{'SUMMARY'}[0]{'KHS av'}*1000;
   $total_shares_accepted = $stats->{'summary'}{'SUMMARY'}[0]{'Accepted'};
   $total_watts = "0";
