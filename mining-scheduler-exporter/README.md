@@ -11,6 +11,11 @@ Notes: The plugins for the stats collector look to the hostname localhost (127.0
  * lolminer api port 9144
  * phoenixminer api port 3333
  * claymore api port 3333
+ * teamredminer api port 4028
+ * sgminer api port 4028
+ * nsgminer api port 4028
+
+If you wish to change the port on any of the plugins you can edit the plugin.pm file and search for $url. It will containe the address:port entry.
 
 There is a stats plugin called none.pm, this one returns 0 on all stats.
 
