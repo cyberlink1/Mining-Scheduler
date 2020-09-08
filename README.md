@@ -120,5 +120,6 @@ Peak hours where I am are 1pm to 7pm Monday through Friday for the months of Jun
 * nsgminer needs the --text-only option to work with the script (https://github.com/ghostlander/nsgminer) You have to compile the source for linux.
 * PhoenixMiner work (https://mega.nz/#F!2VskDJrI!lsQsz1CdDe8x5cH3L8QaBw)
 * NBMiner works (https://github.com/NebuTech/NBMiner/releases)
+* GMiner does not work, I have reported the issue to the developers of the miner.
 
 *I have not tested other miners but will update the list as I test them, or if others report a working status*
