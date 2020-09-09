@@ -15,9 +15,12 @@ Notes: The plugins for the stats collector look to the hostname localhost (127.0
  * sgminer api port 4028
  * nsgminer api port 4028
  * nbminer api port 4028
+ * bminer api port 1880
 
 If you wish to change the port on any of the plugins you can edit the plugin.pm file and search for $url. It will containe the address:port entry.
 
 There is a stats plugin called none.pm, this one returns 0 on all stats.
+
+Note: Not all API's return wattage used by cards. As such some miners will return a 0 for wattage.
 
 ![lolminer](lolminer.png) 
