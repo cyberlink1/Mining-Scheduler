@@ -16,6 +16,7 @@ Notes: The plugins for the stats collector look to the hostname localhost (127.0
  * nsgminer api port 4028
  * nbminer api port 4028
  * bminer api port 1880
+ * xmrig api port 4028
 
 If you wish to change the port on any of the plugins you can edit the plugin.pm file and search for $url. It will containe the address:port entry.
 
