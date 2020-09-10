@@ -1,0 +1,14 @@
+[Unit]
+Description=mining-scheduler node-exporter integration
+After=syslog.target network.target remote-fs.target nss-lookup.target mining-scheduler.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/mining-scheduler
+PIDFile=/opt/mining-scheduler/pid/mining-scheduler-exporter-daemon.pid
+ExecStart=/opt/mining-scheduler/node_exporter/mining-scheduler-exporter-daemon
+ExecStop=/bin/kill -s QUIT $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+
