@@ -22,6 +22,6 @@ If you wish to change the port on any of the plugins you can edit the plugin.pm 
 
 There is a stats plugin called none.pm, this one returns 0 on all stats.
 
-Note: Not all API's return wattage used by cards. As such some miners will return a 0 for wattage.
+Note: Not all API's return all the data. As such some miners will return a 0 for wattage and fan speed. xmrig does not have wattage, fan speed, or per-gpu share stats.
 
 ![lolminer](lolminer.png) 
