@@ -37,7 +37,7 @@ my $GPUS=0;
 #Pull what we are mining
 #
 
-open my $file, '<', "/opt/mining-scheduler/run/miner" || die "Couldn't open $file: $!";
+open my $file, '<', "/opt/mining-scheduler/run/miner" || print "Couldn't open $file: $!";
 $mining = <$file>;
 chomp($mining);
 close $file;

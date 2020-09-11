@@ -50,7 +50,7 @@ my $url3 = 'http://localhost:1880/api/v1/status/stratum';
 #Pull what we are mining
 #
 
-open my $file, '<', "/opt/mining-scheduler/run/miner" || die "Couldn't open $file: $!";
+open my $file, '<', "/opt/mining-scheduler/run/miner" || print "Couldn't open $file: $!";
 $mining = <$file>;
 chomp($mining);
 close $file;
@@ -59,7 +59,7 @@ close $file;
 # Pull the JSON data into $content var
 #
   my $content = get $url1;
-  die "Couldn't get $url1" unless defined $content;
+  print "Couldn't get $url1" unless defined $content;
 
 #
 # Decode the JSON Data and place into vars
@@ -89,7 +89,7 @@ close $file;
 # Pull the JSON data for devices into $content var
 #
   my $content = get $url2;
-  die "Couldn't get $url2" unless defined $content;
+  print "Couldn't get $url2" unless defined $content;
 
 #
 # Decode the JSON Data for devices and place into vars
@@ -109,7 +109,7 @@ close $file;
 # Pull the JSON data for stratum into $content var
 #
   my $content = get $url3;
-  die "Couldn't get $url3" unless defined $content;
+  print "Couldn't get $url3" unless defined $content;
 
 #
 # Decode the JSON Data for devices and place into vars

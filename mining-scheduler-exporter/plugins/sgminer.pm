@@ -44,7 +44,7 @@ my $url = "127.0.0.1:4028";
 #Pull what we are mining
 #
 
-open my $file, '<', "/opt/mining-scheduler/run/miner" || die "Couldn't open $file: $!";
+open my $file, '<', "/opt/mining-scheduler/run/miner" || print "Couldn't open $file: $!";
 $mining = <$file>;
 chomp($mining);
 close $file;
@@ -53,7 +53,7 @@ close $file;
 # Pull the JSON data into $content var
 #
 #  my $content = get $url;
-#  die "Couldn't get $url" unless defined $content;
+#  print "Couldn't get $url" unless defined $content;
 #
 $| = 1;
 
@@ -62,7 +62,7 @@ my ($socket,$data);
 $socket = new IO::Socket::INET ( 
 	PeerAddr   => $url, 
 	Proto      => 'tcp'
-        ) or die "ERROR in Socket Creation : $!\n";
+        ) or print "ERROR in Socket Creation : $!\n";
 #send operation
 $data = "{\"command\":\"summary+devs\",\"parameter\":\"\"}\n";
 $socket->send($data);

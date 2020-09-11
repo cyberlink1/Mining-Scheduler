@@ -42,7 +42,7 @@ my $url = 'http://localhost:4028/stat';
 #Pull what we are mining
 #
 
-open my $file, '<', "/opt/mining-scheduler/run/miner" || die "Couldn't open $file: $!";
+open my $file, '<', "/opt/mining-scheduler/run/miner" || print "Couldn't open $file: $!";
 $mining = <$file>;
 chomp($mining);
 close $file;
@@ -51,7 +51,7 @@ close $file;
 # Pull the JSON data into $content var
 #
   my $content = get $url;
-  die "Couldn't get $url" unless defined $content;
+  print "Couldn't get $url" unless defined $content;
 
 #
 # Decode the JSON Data and place into vars
