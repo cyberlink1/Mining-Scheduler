@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 use Proc::PID::File;
-use Proc::Daemon;
 use Log::Dispatch;
 use Log::Dispatch::File;
 use File::Glob ();
