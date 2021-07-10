@@ -53,7 +53,7 @@ fi
 # Should we start at boot?
 #
   echo -n "Should we start the miner at boot? [Y/n]"
-  read $SBOOT
+  read SBOOT
   if [ -z $SBOOT ]; then
    SBOOT="y"
   fi
